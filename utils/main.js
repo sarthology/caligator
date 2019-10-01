@@ -19,7 +19,9 @@ const textForOperators = {
     'by': '/',
     'multiplied by': '*',
     'into': '*',
-    'cross': '*'
+    'cross': '*',
+    'arithmetic right shift': '>>',
+    'left shift': '<<'
 };
 
 /** @const {string} */

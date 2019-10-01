@@ -5,7 +5,7 @@
  */
 
 // the operators to be used in the expression
-const operators = ['+', '-', '*', '/', '%', '(', ')', '**', '|', '&', '^'];
+const operators = ['+', '-', '*', '/', '%', '(', ')', '**', '|', '&', '^', '<<', '>>'];
 
 /**
  * The precedence of the operators from low to high
@@ -15,6 +15,8 @@ const operators = ['+', '-', '*', '/', '%', '(', ')', '**', '|', '&', '^'];
 const precedence = {
     '|': 0,
     '^': 1,
+    '<<': 1,
+    '>>': 1,
     '&': 2,
     '+': 3,
     '-': 3,
@@ -87,7 +89,7 @@ const getTokens = exp => {
     let operand = '';
 
     for (let i = 0; i < exp.length; i++) {
-        // first check if the token is the operator ** for exponent
+        // first check if the token is a multi character operator
         if (exp[i] === '*' && exp[i + 1] === '*') {
             if (operand !== '')
                 tokens.push(operand);
@@ -95,8 +97,22 @@ const getTokens = exp => {
             tokens.push('**');
         } else if (exp[i] === '*' && exp[i - 1] === '*') {
             continue;
+        } else if (exp[i] === '<' && exp[i + 1] === '<') {
+            if (operand !== '')
+                tokens.push(operand);
+            operand = '';
+            tokens.push('<<');
+        } else if (exp[i] === '<' && exp[i - 1] === '<') {
+            continue;
+        } else if (exp[i] === '>' && exp[i + 1] === '>') {
+            if (operand !== '')
+                tokens.push(operand);
+            operand = '';
+            tokens.push('>>');
+        } else if (exp[i] === '>' && exp[i - 1] === '>') {
+            continue;
         } else {
-            // if the token is not operator **, evaluate for other operators and numbers
+            // if the token is not a multi character operator, evaluate for other operators and numbers
             if (!operators.includes(exp[i])) {
                 operand += exp[i];
             } else {
@@ -141,6 +157,10 @@ const operate = (operator, operand1, operand2) => {
             return operand1 | operand2;
         case '^':
             return operand1 ^ operand2;
+        case '<<':
+            return operand2 << operand1;
+        case '>>':
+            return operand2 >> operand1;
     }
 };
 
